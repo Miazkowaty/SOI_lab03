@@ -3,6 +3,7 @@
 #include <vector>
 #include <time.h>
 #include <pthread.h>
+#include <iostream>
 
 using namespace std;
 
@@ -11,6 +12,15 @@ vector<int> bufferFIFO;
 Semaphore mutex(1), prodEvenSem(0), prodOddSem(0), consEvenSem(0), consOddSem(0);
 unsigned int numOfProdEvenWaiting = 0, numOfProdOddWaiting = 0, numOfConsEvenWaiting = 0, numOfConsOddWaiting = 0;
 int nrEven = 0, nrOdd = 0;
+
+// buffer printing
+
+void printBuffer(){
+	for(int i = 0; i < bufferFIFO.size(); i++){
+		cout << bufferFIFO[i] << " ";
+	}
+	cout << endl << endl;
+}
 
 // checkers
 
@@ -50,6 +60,7 @@ void putEven(int evenNum){
 	printf("Appending even number: [%d]\n", evenNum);
 	bufferFIFO.push_back(evenNum);
 	nrEven ++;
+	printBuffer();
 	
 	if(numOfProdOddWaiting > 0 && canPutOdd()){
 		numOfProdOddWaiting --;
@@ -78,6 +89,7 @@ void popEven(){
 	printf("Popping even number: [%d]\n", bufferFIFO[0]);
 	bufferFIFO.erase(bufferFIFO.begin());
 	nrEven --;
+	printBuffer();
 	
 	if(numOfProdEvenWaiting > 0 && canPutEven()){
 		numOfProdEvenWaiting --;
@@ -108,6 +120,7 @@ void putOdd(int oddNum){
 	printf("Appending odd number: [%d]\n", oddNum);
 	bufferFIFO.push_back(oddNum);
 	nrOdd ++;
+	printBuffer();
 	
 	if(numOfProdEvenWaiting > 0 && canPutEven()){
 		numOfProdEvenWaiting --;
@@ -136,6 +149,7 @@ void popOdd(){
 	printf("Popping odd number: [%d]\n", bufferFIFO[0]);
 	bufferFIFO.erase(bufferFIFO.begin());
 	nrOdd --;
+	printBuffer();
 	
 	if(numOfProdEvenWaiting > 0 && canPutEven()){
 		numOfProdEvenWaiting --;
